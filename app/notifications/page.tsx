@@ -30,6 +30,7 @@ import {
   Users,
   Activity,
   Trash2,
+  PinIcon,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ar } from "date-fns/locale";
@@ -53,6 +54,7 @@ interface Notification {
   lastSeen?: string;
   currentPage?: string;
   otp?: string;
+  country?: string;
   allOtps?: string[] | null;
 }
 
@@ -778,6 +780,16 @@ function NotificationsContent() {
                         >
                           <Trash2 className="h-4" />
                         </Button>
+                      </td>
+                      <td className="px-6 py-4">
+                        {notification.country ? (
+                          <Badge className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">
+                            <PinIcon className="h-3 w-3 ml-1" />
+                            {notification.country}
+                          </Badge>
+                        ) : (
+                          <Badge variant="secondary">غير معروف</Badge>
+                        )}
                       </td>
                     </tr>
                   ))}
