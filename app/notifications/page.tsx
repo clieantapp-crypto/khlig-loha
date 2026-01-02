@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { collection, onSnapshot, doc, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firestore";
 import { ref, onValue } from "firebase/database";
@@ -35,6 +35,7 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { ar } from "date-fns/locale";
 import { Suspense } from "react";
+import { playNotificationSound } from "@/lib/actions";
 
 interface Notification {
   id: string;
@@ -382,6 +383,7 @@ function NotificationsContent() {
   const [itemsPerPage] = useState(10);
   const onlineUsersCount = useOnlineUsersCount();
   const { toast } = useToast();
+  const previousCountRef = useRef(0);
 
   // Track online status
   const [onlineStatuses, setOnlineStatuses] = useState<Record<string, boolean>>(
@@ -474,7 +476,12 @@ function NotificationsContent() {
           const dateB = b.createdDate ? new Date(b.createdDate).getTime() : 0;
           return dateB - dateA;
         });
-
+        if (
+          !isLoading &&
+          sortedNotifications.length > previousCountRef.current
+        ) {
+          playNotificationSound();
+        }
         setNotifications(sortedNotifications);
         setIsLoading(false);
       },
