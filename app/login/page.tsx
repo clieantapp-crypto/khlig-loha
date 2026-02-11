@@ -28,8 +28,8 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [formData, setFormData] = useState<LoginFormData>({
-    email: "ahd@admin.com",
-    password: "ahd@admin.com",
+    email: "ad@min.com",
+    password: "ad@min.com",
   });
   const [touched, setTouched] = useState<{ email: boolean; password: boolean }>(
     { email: false, password: false }

